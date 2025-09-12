@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Google+</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+        }
+
+        .page {
+            display: none;
+            height: 100vh;
+            width: 100vw;
+            overflow-y: auto;
+        }
+
+        /* Стартовая страница */
+        #login-page {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #d32f2f;
+            color: white;
+            flex-direction: column;
+        }
+
+        #login-page input, #login-page button {
+            padding: 10px;
+            margin: 5px;
+            width: 250px;
+            border-radius: 5px;
+            border: none;
+        }
+
+        #login-page button {
+            background-color: white;
+            color: #d32f2f;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Главная и сообщества */
+        header {
+            background-color: #4285f4;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header button {
+            background-color: white;
+            color: #4285f4;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            margin-left: 5px;
+            border-radius: 4px;
+        }
+
+        .container {
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        textarea, input, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button.publish {
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button.publish:hover {
+            background-color: #3367d6;
+        }
+
+        .post, .community-post {
+            background-color: white;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+
+        .comments, .community-comments {
+            margin-top: 10px;
+            padding-left: 10px;
+            border-left: 2px solid #ddd;
+        }
+
+        .comment, .community-comment {
+            margin-bottom: 5px;
+        }
+
+        /* Сообщества */
+        #community-page {
+            background-color: #2e7d32;
+            color: white;
+            padding-top: 10px;
+        }
+
+        #community-page .container {
+            background-color: white;
+            color: black;
+            border-radius: 8px;
+            padding: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- LOGIN PAGE -->
+<div id="login-page" class="page">
+    <h1>Mini Google+</h1>
+    <input type="text" id="username" placeholder="Имя пользователя">
+    <button onclick="login()">Войти / Зарегистрироваться</button>
+</div>
+
+<!-- HOME PAGE -->
+<div id="home-page" class="page">
+    <header>
+        <h2>Mini Google+</h2>
+        <div>
+            <span id="user-display"></span>
+            <button onclick="showHome()">Home</button>
+            <button onclick="showCommunities()">Сообщества</button>
+            <button onclick="logout()">Выйти</button>
+        </div>
+    </header>
+    <div class="container">
+        <h3>Создать пост</h3>
+        <textarea id="post-content" placeholder="Написать пост..."></textarea>
+        <button class="publish" onclick="createPost()">Опубликовать</button>
+        <div id="posts"></div>
+    </div>
+</div>
+
+<!-- COMMUNITY PAGE -->
+<div id="community-page" class="page">
+    <header>
+        <h2>Сообщества</h2>
+        <div>
+            <span id="user-display-community"></span>
+            <button onclick="showHome()">Home</button>
+            <button onclick="showCommunities()">Сообщества</button>
+            <button onclick="logout()">Выйти</button>
+        </div>
+    </header>
+    <div class="container">
+        <h3>Создать сообщество</h3>
+        <input type="text" id="community-name" placeholder="Название сообщества">
+        <button class="publish" onclick="createCommunity()">Создать</button>
+        <h3>Список сообществ</h3>
+        <div id="community-list"></div>
+    </div>
+</div>
+
+<script>
+    let currentUser = null;
+    let postsContainer = document.getElementById('posts');
+    let communities = [];
+
+    // LOGIN
+    function login() {
+        const username = document.getElementById('username').value.trim();
+        if (!username) {
+            alert("Введите имя пользователя!");
+            return;
+        }
+        currentUser = username;
+        document.getElementById('user-display').textContent = currentUser;
+        document.getElementById('user-display-community').textContent = currentUser;
+        document.getElementById('login-page').style.display = 'none';
+        showHome();
+    }
+
+    function logout() {
+        currentUser = null;
+        document.getElementById('login-page').style.display = 'flex';
+        document.getElementById('home-page').style.display = 'none';
+        document.getElementById('community-page').style.display = 'none';
+    }
+
+    // HOME POSTS
+    function showHome() {
+        document.getElementById('home-page').style.display = 'block';
+        document.getElementById('community-page').style.display = 'none';
+    }
+
+    function showCommunities() {
+        document.getElementById('home-page').style.display = 'none';
+        document.getElementById('community-page').style.display = 'block';
+        renderCommunities();
+    }
+
+    function createPost() {
+        if (!currentUser) return;
+        const content = document.getElementById('post-content').value.trim();
+        if (!content) return;
+
+        const postEl = document.createElement('div');
+        postEl.className = 'post';
+        postEl.innerHTML = `
+            <strong>${currentUser}</strong>
+            <p>${content}</p>
+            <input type="text" placeholder="Оставить комментарий..." class="comment-input">
+            <button onclick="addComment(this)">Комментировать</button>
+            <div class="comments"></div>
+        `;
+        postsContainer.prepend(postEl);
+        document.getElementById('post-content').value = '';
+    }
+
+    function addComment(button) {
+        const postEl = button.parentElement;
+        const input = postEl.querySelector('.comment-input');
+        const commentText = input.value.trim();
+        if (!commentText) return;
+
+        const commentsEl = postEl.querySelector('.comments');
+        const commentEl = document.createElement('div');
+        commentEl.className = 'comment';
+        commentEl.textContent = `${currentUser}: ${commentText}`;
+        commentsEl.appendChild(commentEl);
+
+        input.value = '';
+    }
+
+    // COMMUNITIES
+    function createCommunity() {
+        const name = document.getElementById('community-name').value.trim();
+        if (!name) return;
+        if (communities.some(c => c.name === name)) {
+            alert("Сообщество с таким именем уже существует!");
+            return;
+        }
+        communities.push({name: name, posts: []});
+        document.getElementById('community-name').value = '';
+        renderCommunities();
+    }
+
+    function renderCommunities() {
+        const listEl = document.getElementById('community-list');
+        listEl.innerHTML = '';
+        communities.forEach((c, index) => {
+            const div = document.createElement('div');
+            div.className = 'post';
+            div.innerHTML = `
+                <strong>${c.name}</strong>
+                <button onclick="enterCommunity(${index})">Войти</button>
+            `;
+            listEl.appendChild(div);
+        });
+    }
+
+    function enterCommunity(index) {
+        const c = communities[index];
+        const container = document.getElementById('community-list');
+        container.innerHTML = `<h3>${c.name}</h3>
+            <textarea id="community-post-content" placeholder="Написать пост..."></textarea>
+            <button class="publish" onclick="createCommunityPost(${index})">Опубликовать</button>
+            <div id="community-posts"></div>
+            <button onclick="renderCommunities()">Назад к сообществам</button>
+        `;
+        renderCommunityPosts(c);
+    }
+
+    function createCommunityPost(index) {
+        const c = communities[index];
+        const content = document.getElementById('community-post-content').value.trim();
+        if (!content) return;
+
+        c.posts.unshift({user: currentUser, content: content, comments: []});
+        renderCommunityPosts(c);
+        document.getElementById('community-post-content').value = '';
+    }
+
+    function renderCommunityPosts(c) {
+        const postsDiv = document.getElementById('community-posts');
+        postsDiv.innerHTML = '';
+        c.posts.forEach((p, i) => {
+            const postEl = document.createElement('div');
+            postEl.className = 'community-post';
+            postEl.innerHTML = `
+                <strong>${p.user}</strong>
+                <p>${p.content}</p>
+                <input type="text" placeholder="Оставить комментарий..." class="community-comment-input">
+                <button onclick="addCommunityComment(${c.name ? communities.indexOf(c) : 0}, ${i})">Комментировать</button>
+                <div class="community-comments">${p.comments.map(cm => `<div class="community-comment">${cm}</div>`).join('')}</div>
+            `;
+            postsDiv.appendChild(postEl);
+        });
+    }
+
+    function addCommunityComment(commIndex, postIndex) {
+        const c = communities[commIndex];
+        const postEl = document.getElementById('community-posts').children[postIndex];
+        const input = postEl.querySelector('.community-comment-input');
+        const commentText = input.value.trim();
+        if (!commentText) return;
+
+        c.posts[postIndex].comments.push(`${currentUser}: ${commentText}`);
+        renderCommunityPosts(c);
+    }
+
+    // Show login on start
+    document.getElementById('login-page').style.display = 'flex';
+</script>
+</body>
+</html> 
