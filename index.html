@@ -1,313 +1,66 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>My+ — прототип</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ничего не найдено</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            background-color: #f8f8f8;
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+        }
+        .container {
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .warning {
+            color: #d9534f;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        .button {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #4285F4;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #357ae8;
+        }
+    </style>
 </head>
-<body class="bg-gray-100 text-gray-900">
-
-  <!-- Навбар -->
-  <header class="bg-white shadow-md p-4 flex justify-between items-center">
-    <h1 class="text-2xl font-bold text-red-500">My+</h1>
-    <nav class="flex space-x-6">
-      <a href="#" class="hover:text-red-500" data-nav>Лента</a>
-      <a href="#" class="hover:text-red-500" data-nav>Кружки</a>
-      <a href="#" class="hover:text-red-500" data-nav>Сообщества</a>
-      <a href="#" class="hover:text-red-500" data-nav>Подборки</a>
-      <a href="#" class="hover:text-red-500" data-nav>Уведомления</a>
-    </nav>
-    <button id="loginBtn" class="bg-red-500 text-white px-4 py-2 rounded-lg">Войти</button>
-  </header>
-
-  <!-- Контент -->
-  <main class="container mx-auto mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-
-    <!-- Левая колонка (профиль / меню) -->
-    <aside class="bg-white p-4 rounded-lg shadow-md">
-      <h2 class="font-bold mb-2">Мой профиль</h2>
-      <div class="flex items-center space-x-3 mb-4">
-        <div class="w-12 h-12 bg-gray-300 rounded-full"></div>
-        <div>
-          <p id="username" class="font-semibold">Гость</p>
-          <p id="useremail" class="text-sm text-gray-500">Не вошли</p>
-        </div>
-      </div>
-      <ul class="space-y-2">
-        <li><a href="#" class="text-blue-500">Мои посты</a></li>
-        <li><a href="#" class="text-blue-500">Кружки</a></li>
-        <li><a href="#" class="text-blue-500">Сообщества</a></li>
-        <li><a href="#" class="text-blue-500">Подборки</a></li>
-      </ul>
-    </aside>
-
-    <!-- Центральная колонка (лента) -->
-    <section class="md:col-span-2">
-      <!-- Добавление поста -->
-      <div class="bg-white p-4 rounded-lg shadow-md mb-6">
-        <textarea id="postInput" class="w-full p-2 border rounded-md" rows="3" placeholder="Что у вас нового?"></textarea>
-        <div class="flex justify-between items-center mt-2">
-          <small id="charCount" class="text-sm text-gray-500">0 / 1000</small>
-          <button id="postBtn" class="bg-red-500 text-white px-4 py-2 rounded-lg">Опубликовать</button>
-        </div>
-      </div>
-
-      <!-- Лента -->
-      <div id="feed"></div>
-    </section>
-  </main>
-
-  <!-- Модалка логина -->
-  <div id="loginModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-    <div class="bg-white p-6 rounded-lg shadow-lg w-80">
-      <h2 class="text-xl font-bold mb-4">Вход</h2>
-      <input id="loginName" type="text" placeholder="Имя" class="w-full mb-2 p-2 border rounded-md">
-      <input id="loginEmail" type="email" placeholder="Email" class="w-full mb-4 p-2 border rounded-md">
-      <div class="flex justify-end space-x-2">
-        <button id="closeLogin" class="px-3 py-2 bg-gray-300 rounded-lg">Отмена</button>
-        <button id="submitLogin" class="px-3 py-2 bg-red-500 text-white rounded-lg">Войти</button>
-      </div>
+<body>
+    <div class="container">
+        <p class="warning">У нас поломки с мобильных клиентов</p>
+        <h1>Простите, ничего не найдено</h1>
+        <p>По результатам поиска, что вы имели в виду?</p>
+        <a href="https://www.google.com" class="button">Start Original Google Page</a>
     </div>
-  </div>
-
-  <!-- Уведомление (toast) -->
-  <div id="toast" class="fixed bottom-6 right-6 hidden bg-gray-800 text-white px-4 py-2 rounded-md shadow-md"></div>
-
-  <script>
-    /********** Утилиты для localStorage **********/
-    function savePosts(posts) {
-      localStorage.setItem('posts', JSON.stringify(posts));
-    }
-    function loadPosts() {
-      try {
-        return JSON.parse(localStorage.getItem('posts') || '[]');
-      } catch (e) {
-        return [];
-      }
-    }
-    function saveUser(user) {
-      if (user) localStorage.setItem('user', JSON.stringify(user));
-      else localStorage.removeItem('user');
-    }
-    function loadUser() {
-      try {
-        return JSON.parse(localStorage.getItem('user') || 'null');
-      } catch (e) {
-        return null;
-      }
-    }
-
-    /********** Безопасное экранирование текста (простая защита от XSS) **********/
-    function escapeHtml(str) {
-      return String(str)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-    }
-
-    /********** Переменные UI **********/
-    const feed = document.getElementById('feed');
-    const postBtn = document.getElementById('postBtn');
-    const postInput = document.getElementById('postInput');
-    const charCount = document.getElementById('charCount');
-    const loginBtn = document.getElementById('loginBtn');
-    const loginModal = document.getElementById('loginModal');
-    const closeLogin = document.getElementById('closeLogin');
-    const submitLogin = document.getElementById('submitLogin');
-    const usernameEl = document.getElementById('username');
-    const useremailEl = document.getElementById('useremail');
-    const toast = document.getElementById('toast');
-
-    /********** Состояние **********/
-    let posts = loadPosts(); // newest first (index 0 — самый новый)
-    let user = loadUser();
-
-    /********** Render одного поста (возвращает DOM элемент) **********/
-    function createPostElement(post) {
-      const wrapper = document.createElement('div');
-      wrapper.className = 'bg-white p-4 rounded-lg shadow-md mb-4 post';
-      wrapper.dataset.id = post.id;
-
-      wrapper.innerHTML = `
-        <div class="flex items-center space-x-3 mb-2">
-          <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-sm text-gray-700">${escapeHtml(post.author[0] || 'G')}</div>
-          <div>
-            <p class="font-semibold">${escapeHtml(post.author)}</p>
-            <p class="text-sm text-gray-500">${escapeHtml(post.time)}</p>
-          </div>
-        </div>
-        <p class="mb-3 post-text">${escapeHtml(post.text)}</p>
-        <div class="flex space-x-4 text-gray-500">
-          <button data-action="like" class="hover:text-red-500">👍 Нравится (<span class="like-count">${post.likes}</span>)</button>
-          <button data-action="comment" class="hover:text-red-500">💬 Комментировать (<span class="comment-count">${post.comments}</span>)</button>
-          <button data-action="share" class="hover:text-red-500">↗ Поделиться (<span class="share-count">${post.shares}</span>)</button>
-        </div>
-      `;
-      return wrapper;
-    }
-
-    /********** Render ленты **********/
-    function renderFeed() {
-      feed.innerHTML = '';
-      if (posts.length === 0) {
-        const empty = document.createElement('div');
-        empty.className = 'bg-white p-6 rounded-lg shadow-md text-gray-600';
-        empty.textContent = 'Лента пуста — опубликуйте первый пост!';
-        feed.appendChild(empty);
-        return;
-      }
-      posts.forEach(post => {
-        feed.appendChild(createPostElement(post));
-      });
-    }
-
-    /********** Действия по клику (делегирование) **********/
-    feed.addEventListener('click', (e) => {
-      const btn = e.target.closest('button[data-action]');
-      if (!btn) return;
-      const action = btn.dataset.action;
-      const postEl = btn.closest('.post');
-      if (!postEl) return;
-      const id = postEl.dataset.id;
-      const idx = posts.findIndex(p => p.id === id);
-      if (idx === -1) return;
-
-      if (action === 'like') {
-        posts[idx].likes++;
-        savePosts(posts);
-        // Обновим только счётчик в DOM, чтобы не перерисовывать всю ленту
-        const span = postEl.querySelector('.like-count');
-        if (span) span.textContent = posts[idx].likes;
-      } else if (action === 'comment') {
-        const text = prompt('Введите комментарий (демонстрация). Текст не сохраняётся в этом прототипе:');
-        if (text !== null && text.trim() !== '') {
-          posts[idx].comments++;
-          savePosts(posts);
-          const span = postEl.querySelector('.comment-count');
-          if (span) span.textContent = posts[idx].comments;
-          showToast('Комментарий добавлен (в демопамяти)');
-        }
-      } else if (action === 'share') {
-        posts[idx].shares++;
-        savePosts(posts);
-        const span = postEl.querySelector('.share-count');
-        if (span) span.textContent = posts[idx].shares;
-        showToast('Пост "поделился" (демо)');
-      }
-    });
-
-    /********** Публикация поста **********/
-    postBtn.addEventListener('click', () => {
-      const text = postInput.value.trim();
-      if (!text) {
-        showToast('Введите текст поста.');
-        return;
-      }
-      const author = user ? user.name : 'Гость';
-      const newPost = {
-        id: String(Date.now()) + '-' + Math.random().toString(36).slice(2,7),
-        author,
-        text,
-        time: new Date().toLocaleString(),
-        likes: 0,
-        comments: 0,
-        shares: 0
-      };
-      // newest first
-      posts.unshift(newPost);
-      savePosts(posts);
-      // добавить в начало DOM без полной перерисовки
-      feed.insertBefore(createPostElement(newPost), feed.firstChild);
-      postInput.value = '';
-      updateCharCount();
-      showToast('Пост опубликован');
-    });
-
-    /********** Логин/логаут **********/
-    function updateUserUI() {
-      if (user) {
-        usernameEl.textContent = user.name;
-        useremailEl.textContent = user.email;
-        loginBtn.textContent = 'Выйти';
-      } else {
-        usernameEl.textContent = 'Гость';
-        useremailEl.textContent = 'Не вошли';
-        loginBtn.textContent = 'Войти';
-      }
-    }
-
-    loginBtn.addEventListener('click', () => {
-      if (user) {
-        // логаут
-        if (confirm('Выйти из аккаунта?')) {
-          user = null;
-          saveUser(null);
-          updateUserUI();
-        }
-      } else {
-        loginModal.classList.remove('hidden');
-      }
-    });
-
-    closeLogin.addEventListener('click', () => {
-      loginModal.classList.add('hidden');
-    });
-
-    submitLogin.addEventListener('click', () => {
-      const name = document.getElementById('loginName').value.trim();
-      const email = document.getElementById('loginEmail').value.trim();
-      if (!name || !email) {
-        alert('Введите имя и email');
-        return;
-      }
-      user = { name, email };
-      saveUser(user);
-      updateUserUI();
-      loginModal.classList.add('hidden');
-      showToast('Вы вошли как ' + name);
-    });
-
-    /********** Char counter **********/
-    function updateCharCount() {
-      const len = postInput.value.length;
-      charCount.textContent = `${len} / 1000`;
-    }
-    postInput.addEventListener('input', updateCharCount);
-
-    /********** Toast **********/
-    let toastTimer = null;
-    function showToast(text) {
-      toast.textContent = text;
-      toast.classList.remove('hidden');
-      if (toastTimer) clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => toast.classList.add('hidden'), 2500);
-    }
-
-    /********** Инициализация при загрузке страницы **********/
-    (function init() {
-      updateCharCount();
-      updateUserUI();
-      renderFeed();
-
-      // для демонстрации: если лента пустая — добавим примерный пост (однократно)
-      if (posts.length === 0) {
-        const demoPost = {
-          id: 'demo-1',
-          author: 'Иван Иванов',
-          text: 'Привет! Это демонстрационный пост. Попробуйте лайкать, комментировать и публиковать свои посты — они сохранятся в localStorage.',
-          time: new Date().toLocaleString(),
-          likes: 0,
-          comments: 0,
-          shares: 0
-        };
-        posts.unshift(demoPost);
-        savePosts(posts);
-        renderFeed();
-      }
-    })();
-  </script>
 </body>
 </html>
